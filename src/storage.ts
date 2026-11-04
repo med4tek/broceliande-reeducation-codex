@@ -3,7 +3,12 @@ export type Tracking = { id: string; date: string; status: string };
 export type LocalData = { program: Program; tracking: Tracking[] };
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("broceliande-local", 1);
+    const request = indexedDB.open(
+      import.meta.env.BASE_URL === "/"
+        ? "broceliande-local"
+        : "broceliande-local:" + import.meta.env.BASE_URL,
+      1,
+    );
     request.onupgradeneeded = () => request.result.createObjectStore("patient");
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);

@@ -4,7 +4,10 @@ export function InstallQr() {
   const [image, setImage] = useState("");
   useEffect(() => {
     let active = true;
-    QRCode.toDataURL(location.origin + "/", { width: 280, margin: 4 })
+    QRCode.toDataURL(location.origin + import.meta.env.BASE_URL, {
+      width: 280,
+      margin: 4,
+    })
       .then((url) => {
         if (active) setImage(url);
       })

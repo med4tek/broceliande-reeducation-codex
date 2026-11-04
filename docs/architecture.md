@@ -65,8 +65,16 @@ Limites : JSON décompressé 2 000 000 octets, Base32 3 300 000 caractères, 500
 
 ## Stockage et exploitation
 
-IndexedDB, base `broceliande-local`, store `patient`, clé `data` : programme et suivi. Pas de stockage patient distant ; le poste PC travaille uniquement dans l’état React. Fermer la session retire les références de travail de l’interface (effacement sécurisé de la RAM non garanti par JavaScript).
+IndexedDB, base `broceliande-local` à la racine (sinon `broceliande-local:<chemin-de-base>`), store `patient`, clé `data` : programme et suivi. Pas de stockage patient distant ; le poste PC travaille uniquement dans l’état React. Fermer la session retire les références de travail de l’interface (effacement sécurisé de la RAM non garanti par JavaScript).
 
 Le stockage local n’est pas chiffré par l’application. Verrouillage et chiffrement système du téléphone indispensables à évaluer. Les caches ne contiennent que les fichiers statiques. Les sauvegardes système du navigateur/téléphone peuvent avoir leurs propres mécanismes cloud : le déploiement doit les examiner, et l’application ne peut pas garantir leur absence.
 
-Déploiement à la racine d’un hébergement HTTPS, sans injection de scripts tiers. Configurer au niveau du serveur : TLS, politique CSP sans origine externe (les workers et images `data:` doivent être autorisés localement), `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, pas de télémétrie. Évaluer soigneusement les journaux et les changements de code statique : une mise à jour malveillante du client aurait accès aux données locales.
+Déploiement HTTPS à la racine par défaut, ou sous un chemin terminé par `/` configuré via `VITE_BASE_PATH` à la compilation, sans injection de scripts tiers. Configurer au niveau du serveur : TLS, politique CSP sans origine externe (les workers et images `data:` doivent être autorisés localement), `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, pas de télémétrie. Évaluer soigneusement les journaux et les changements de code statique : une mise à jour malveillante du client aurait accès aux données locales.
+
+## Déploiement automatique GitHub Pages
+
+`.github/workflows/pages.yml` s’exécute lors d’un push sur `main` ou d’un lancement manuel. Le job de construction a uniquement `contents:read`, utilise Node 24, `npm ci`, les tests métier et les tests Chromium sous `/broceliande-reeducation-codex/`, puis génère et téléverse `dist/`. Le job de déploiement obtient uniquement `pages:write` et `id-token:write`, dans l’environnement `github-pages`. Aucun secret supplémentaire n’est demandé ; aucun dossier patient n’est fourni au workflow.
+
+L’activation initiale de Pages avec la source GitHub Actions reste un réglage du propriétaire du dépôt. Les restrictions du forfait, les autorisations Actions et les règles de protection de l’environnement GitHub peuvent empêcher le déploiement. Les deux jobs distinguent les tests/artefacts réussis d’une publication effective.
+
+La base Vite, le manifeste relatif, le QR d’installation, l’enregistrement du service worker et sa liste de préchargement prennent en compte le sous-chemin. Les caches sont séparés par chemin et n’effacent pas ceux d’autres applications de l’origine. Les données IndexedDB sont également séparées par chemin ; aucun déplacement de données patient entre adresses n’est automatique.

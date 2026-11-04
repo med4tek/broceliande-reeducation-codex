@@ -15,7 +15,7 @@
 
 ### Installation
 
-Première ouverture en ligne sur une origine HTTPS. Attendez le message de disponibilité hors ligne avant de couper la connexion. Sur iPhone : Safari → Partager → Sur l’écran d’accueil. Sur Android : menu du navigateur → Installer l’application / Ajouter à l’écran d’accueil. L’installation n’est pas obligatoire. Conservez la même origine et le même navigateur pour retrouver le stockage.
+Première ouverture en ligne sur une origine HTTPS. Attendez le message de disponibilité hors ligne avant de couper la connexion. Sur iPhone : Safari → Partager → Sur l’écran d’accueil. Sur Android : menu du navigateur → Installer l’application / Ajouter à l’écran d’accueil. L’installation n’est pas obligatoire. Conservez la même origine, le même chemin de l’application et le même navigateur pour retrouver le stockage.
 
 Le fonctionnement hors ligne exige un chargement complet initial. Les mises à jour du programme par fichier, photo de QR ou code complet n’exigent pas Internet. Prendre la photo d’un écran ne nécessite aucune liaison réseau entre les appareils.
 

@@ -11,7 +11,7 @@ const secret = "Foret-demo-2026";
 async function start(browser: Browser, role: "patient" | "professional") {
   const context = await browser.newContext();
   const page = await context.newPage();
-  await page.goto("/");
+  await page.goto("./");
   await page
     .getByRole("button", {
       name: role === "patient" ? "Je suis patient" : "Je suis professionnel",
@@ -242,7 +242,7 @@ test("téléphone : édition directe, objectif, suppression locale et interface 
     hasTouch: true,
   });
   const p = await ctx.newPage();
-  await p.goto("/");
+  await p.goto("./");
   await p.getByRole("button", { name: "Je suis patient" }).click();
   await importCode(
     p,
@@ -381,7 +381,7 @@ test("deux onglets patient ne peuvent pas écraser leurs changements locaux", as
     await encode({ schema: 1, type: "snapshot", program }, secret),
   );
   const second = await first.context().newPage();
-  await second.goto("/");
+  await second.goto("./");
   await second.getByRole("button", { name: "Je suis patient" }).click();
   await first
     .locator(".exercise")
@@ -397,4 +397,69 @@ test("deux onglets patient ne peuvent pas écraser leurs changements locaux", as
   await expect(
     second.locator(".exercise").getByLabel("Aujourd’hui"),
   ).toHaveValue("Réalisé");
+});
+
+test("installation : manifeste, QR et cache utilisent le chemin du site", async ({
+  browser,
+}) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto("./");
+  const base = new URL(page.url());
+  const manifestUrl = await page
+    .locator('link[rel="manifest"]')
+    .evaluate((link: HTMLLinkElement) => link.href);
+  expect(new URL(manifestUrl).pathname).toBe(
+    base.pathname + "manifest.webmanifest",
+  );
+  const response = await page.request.get(manifestUrl);
+  expect(response.ok()).toBe(true);
+  const manifest = await response.json();
+  expect(new URL(manifest.start_url, manifestUrl).href).toBe(base.href);
+  expect(new URL(manifest.scope, manifestUrl).href).toBe(base.href);
+  for (const icon of manifest.icons) {
+    const url = new URL(icon.src, manifestUrl);
+    expect(url.pathname.startsWith(base.pathname)).toBe(true);
+    expect((await page.request.get(url.href)).ok()).toBe(true);
+  }
+  await page.getByRole("button", { name: "Aide & confidentialité" }).click();
+  const qr = page.getByAltText(
+    "QR d’installation de l’application, sans données patient",
+  );
+  await expect(qr).toBeVisible();
+  const pixels = await qr.evaluate((img: HTMLImageElement) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(img, 0, 0);
+    return {
+      width: canvas.width,
+      height: canvas.height,
+      data: Array.from(
+        ctx.getImageData(0, 0, canvas.width, canvas.height).data,
+      ),
+    };
+  });
+  const { default: jsQR } = await import("jsqr");
+  expect(
+    jsQR(new Uint8ClampedArray(pixels.data), pixels.width, pixels.height)?.data,
+  ).toBe(base.href);
+  const scope = await page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.ready;
+    return registration.scope;
+  });
+  expect(scope).toBe(base.href);
+  const cacheUrls = await page.evaluate(async () => {
+    const all = [];
+    for (const key of await caches.keys()) {
+      for (const request of await (await caches.open(key)).keys())
+        all.push(request.url);
+    }
+    return all;
+  });
+  expect(cacheUrls.some((url) => url === base.href)).toBe(true);
+  expect(
+    cacheUrls.every((url) => new URL(url).pathname.startsWith(base.pathname)),
+  ).toBe(true);
 });

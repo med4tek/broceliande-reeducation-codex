@@ -5,7 +5,7 @@
 Tests exécutés dans l’environnement cloud Linux, Node.js 24.22.1, Chromium 155.0.8059.79 système via Playwright. Les postes indépendants sont des **contextes navigateur isolés**, pas trois ordinateurs physiques. Un format mobile 390 × 844 vérifie l’interface tactile et l’absence de débordement horizontal.
 
 - `npm test` : **9 tests réussis sur 9** : métier/transport, scénario 3 → 5 → 7, adaptation à 3 × 15 et désactivation de la marche, ajouts obsolètes indépendants, conflits du même élément, retrait concurrent, annulation, anti-rejeu, mauvais programme, formats incohérents, transfert chiffré de 200 éléments, code corrompu et mauvais secret.
-- `npm run test:e2e` : **5 parcours Chromium réussis sur 5** : trois professionnels et un patient, transfert par fichier/code, persistance IndexedDB et rechargement hors ligne ; QR généré puis décodé depuis ses vrais pixels ; édition directe sur téléphone, objectif et effacement ; choix explicite d’un conflit, rejet du doublon et annulation ; concurrence entre deux onglets.
+- `npm run test:e2e` : **6 parcours Chromium réussis sur 6** : trois professionnels et un patient, transfert par fichier/code, persistance IndexedDB et rechargement hors ligne ; QR généré puis décodé depuis ses vrais pixels ; édition directe sur téléphone, objectif et effacement ; choix explicite d’un conflit, rejet du doublon et annulation ; concurrence entre deux onglets ; manifeste, QR d’installation et portée du cache.
 - `npm ci --no-audit --no-fund --cache /tmp/broceliande-npm-cache` : installation reproduite à partir du lockfile, puis tests et compilation relancés.
 - `npm run build` : TypeScript strict et compilation des ressources statiques ; service worker généré avec une liste fermée des ressources à précharger. Avertissement non bloquant de taille du bundle principal (~515 Ko avant gzip).
 
@@ -46,3 +46,7 @@ La destination médicale revendiquée et les fonctions réellement utilisées pe
 3. Sauvegarde chiffrée du suivi, explication des changements à la granularité des champs et meilleure aide à la saisie.
 4. Migrations de schéma, compatibilité de catalogue et stratégie d’archivage conservant les retraits/anti-rejeu.
 5. Médias embarqués validés, installation et mises à jour guidées, audit complet d’accessibilité.
+
+## Préparation de GitHub Pages
+
+Le même prototype est validé localement à la racine et sous `/broceliande-reeducation-codex/` : cinq parcours fonctionnels plus le contrôle du manifeste, des icônes, du QR d’installation et du service worker. Le workflow est prévu pour refaire les neuf tests métier et les six tests navigateur avant publication. Ces essais locaux ne prouvent pas qu’un job GitHub Actions a été exécuté ou qu’un site Pages est déjà publié. L’activation initiale est décrite dans le README ; aucune visibilité de dépôt n’est modifiée automatiquement.

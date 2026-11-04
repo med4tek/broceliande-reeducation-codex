@@ -1147,7 +1147,9 @@ createRoot(document.getElementById("root")!).render(<App />);
 if ("serviceWorker" in navigator && import.meta.env.PROD)
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
+      .register(import.meta.env.BASE_URL + "sw.js", {
+        scope: import.meta.env.BASE_URL,
+      })
       .then(async (r) => {
         await navigator.serviceWorker.ready;
         if (r.active) window.dispatchEvent(new Event("offline-ready"));

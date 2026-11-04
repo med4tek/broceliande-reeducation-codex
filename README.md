@@ -4,6 +4,20 @@ Prototype PWA de prescription collaborative **sans backend de dossiers patients*
 
 **Démonstration uniquement : catalogue et parcours non validés pour les soins réels. Aucune conformité RGPD, HDS ou dispositif médical n’est revendiquée.**
 
+## Tester sans installer Node.js
+
+Le workflow [Publier Brocéliande sur GitHub Pages](.github/workflows/pages.yml) installe les outils dans GitHub, exécute les tests, compile et publie uniquement `dist/`. Aucun outil à installer sur les ordinateurs ou téléphones qui utilisent le site.
+
+**Première activation par le propriétaire du dépôt** : GitHub → **Settings → Pages → Build and deployment → Source → GitHub Actions**. Si Pages n’est pas proposé, vérifier les droits d’administration et les conditions du forfait GitHub pour la visibilité actuelle du dépôt ; le workflow ne change pas sa visibilité.
+
+Ensuite, ouvrir **Actions → Publier Brocéliande sur GitHub Pages → Run workflow → main → Run workflow**. L’adresse confirmée par GitHub apparaît dans le job de déploiement et dans Settings → Pages. L’adresse prévue pour ce dépôt est `https://med4tek.github.io/broceliande-reeducation-codex/` ; elle ne doit être considérée disponible qu’après un déploiement réussi. Chaque nouveau push sur `main` relance tests et publication.
+
+L’artefact de compilation `github-pages` est également téléchargeable depuis une exécution réussie du job de construction. Le code source reste dans Git ; la compilation est générée par Actions et n’a pas besoin d’être ajoutée au dépôt.
+
+Le site distribue uniquement les fichiers génériques de l’application. Les programmes ne sont jamais envoyés à GitHub par l’application. GitHub peut traiter les métadonnées normales de consultation du site ; cela ne constitue pas une validation réglementaire pour les soins.
+
+**Important :** les données locales sont liées au navigateur, à l’origine et au chemin de déploiement. Avant de changer d’adresse ou de navigateur, exporter le programme chiffré puis le restaurer à la nouvelle adresse. Pour les premiers essais, utiliser exclusivement des données fictives.
+
 ## Démarrer
 
 Node.js 22.12+ (testé avec 24.22.1), npm et un navigateur récent sont requis.
@@ -15,7 +29,7 @@ npm run build
 npm run preview -- --port 4173
 ```
 
-`npm run dev` : développement avec rechargement automatique. Le service worker est activé uniquement dans la version compilée (`build` puis `preview`). Héberger `dist/` **à la racine d’une origine HTTPS** pour les téléphones ; localhost est accepté pour le développement. Ne jamais mettre de données individuelles dans les URL. Aucun secret de serveur nécessaire.
+`npm run dev` : développement avec rechargement automatique. Le service worker est activé uniquement dans la version compilée (`build` puis `preview`). Héberger `dist/` **sur une origine HTTPS** pour les téléphones (racine par défaut ; sous-chemin configurable avec `VITE_BASE_PATH`) ; localhost est accepté pour le développement. Ne jamais mettre de données individuelles dans les URL. Aucun secret de serveur nécessaire.
 
 ```sh
 npm run test:e2e

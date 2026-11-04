@@ -1,11 +1,12 @@
 import { existsSync } from "node:fs";
 import { defineConfig } from "@playwright/test";
+const base = process.env.VITE_BASE_PATH || "/";
 export default defineConfig({
   testDir: "tests/browser",
   timeout: 60000,
   workers: 1,
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:4173" + base,
     headless: true,
     actionTimeout: 12000,
     trace: "retain-on-failure",
@@ -18,7 +19,7 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run build && npm run preview -- --port 4173",
-    url: "http://127.0.0.1:4173",
+    url: "http://127.0.0.1:4173" + base,
     reuseExistingServer: false,
     timeout: 60000,
   },
